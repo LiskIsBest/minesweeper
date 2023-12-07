@@ -1,15 +1,6 @@
-# resource path function so pyninstaller can find images
-import sys
-import os
-
-
-def resource_path(relative_path):
-    base_path = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
-    return os.path.join(base_path, relative_path)
-
-
 import tkinter as tk
 from PIL import Image, ImageTk
+from PIL.ImageTk import PhotoImage
 
 
 class Grid_difficulty:
@@ -17,8 +8,8 @@ class Grid_difficulty:
         self.name = name
         self.height: int = height
         self.width: int = width
-        self.screen_height = (self.height * 50) + 30
-        self.screen_width = (self.width * 50) + 40
+        self.screen_height = (self.height * 25) + 60
+        self.screen_width = (self.width * 25) + 40
 
 
 grid_sizes = {
@@ -34,10 +25,21 @@ class Window(tk.Tk):
 
         super(Window, self).__init__()
 
+        self.grid_sqr_image = ImageTk.PhotoImage(
+            Image.open("./images/grid_square1.png").resize(
+                (25, 25), Image.Resampling.LANCZOS
+            )
+        )
+        self.flag_image = ImageTk.PhotoImage(
+            Image.open("./images/grid_flag1.png").resize(
+                (25, 25), Image.Resampling.LANCZOS
+            )
+        )
+
         self.default_difficulty = grid_sizes["Medium"]
-        self.difficulty = self.default_difficulty  # TODO change to match drop down
-        self.window_width = self.default_difficulty.screen_width
-        self.window_height = self.default_difficulty.screen_height
+        self.difficulty = self.default_difficulty
+        self.window_width = self.difficulty.screen_width
+        self.window_height = self.difficulty.screen_height
         self.geometry(f"{self.window_width}x{self.window_height}")
 
         # menu bar
@@ -62,15 +64,14 @@ class Window(tk.Tk):
         #! >>>>>>>>>>>>>> TODO WORK ON MAKING CANVAS BOTTOM MARGIN SHOW <<<<<<<<<<<<<<<<
         self.grid_canvas = tk.Canvas(
             self,
-            width=self.difficulty.width * 50,
-            height=self.difficulty.height * 50,
+            width=self.difficulty.width * 25,
+            height=self.difficulty.height * 25,
             bg="blue",
         )
-        self.grid_canvas.place(x=15,y=40)
+        self.grid_canvas.place(x=15, y=40)
 
         self.reset_button = Reset(parent=self.main_canvas)
-        # self.reset_button.configure(text="Reset", command=Reset(self).reset_board)
-        self.reset_button.place(x=self.window_width // 2, y=7)
+        self.reset_button.place(x=self.window_width // 2, y=21, anchor="center")
         self.config(menu=self.menu_bar)
 
     def set_difficulty(self, dif: str):
@@ -78,9 +79,17 @@ class Window(tk.Tk):
             old_dif = self.difficulty.name
             new_dif = grid_sizes[dif]
             self.difficulty = new_dif
-            self.geometry(f"{new_dif.screen_width}x{new_dif.screen_height}")
+            new_res = f"{new_dif.screen_width}x{new_dif.screen_height}"
+            self.geometry(new_res)
+            self.grid_canvas.configure(
+                width=self.difficulty.width * 25,
+                height=self.difficulty.height * 25,
+            )
+            self.reset_button.place(x=new_dif.screen_width // 2, y=21, anchor="center")
             #! REMOVE PRINT WHEN DONE
-            print(f"changed difficulty from {old_dif} to {new_dif.name}")
+            print(
+                f"changed difficulty from {old_dif} to {new_dif.name}. new_res:{new_res}"
+            )
 
         return inner
 
@@ -94,6 +103,44 @@ class Reset(tk.Button):
     def reset_board(self):
         #! REMOVE PRINT HEN DONE
         print("pressed restet button")
+
+
+def grid_img_make(filename: str) -> PhotoImage:
+    if not isinstance(filename, str):
+        raise TypeError(
+            f"param:filename must be type<str> not type<{type(filename).__name__}>"
+        )
+    img = ImageTk.PhotoImage(
+        Image.open(filename).resize((25, 25), Image.Resampling.LANCZOS)
+    )
+    return img
+
+
+class GridSquare(tk.Canvas):
+    def __init__(self, parent, *args, **kwargs):
+        tk.Canvas.__init__(self, parent, *args, **kwargs)
+        self.parent = parent
+
+        # grid square images
+        grid_sqr_unclicked: PhotoImage = grid_img_make("./images/grid_square1.png")
+        grid_sqr_clicked: PhotoImage = grid_img_make("./images/grid_square2.png")
+        flag_image: PhotoImage = grid_img_make("./images/grid_flag1.png")
+
+        # grid number images
+        grid_num_1: PhotoImage = grid_img_make("./images/nums/grid_num_1.png")
+        grid_num_2: PhotoImage = grid_img_make("./images/nums/grid_num_2.png")
+        grid_num_3: PhotoImage = grid_img_make("./images/nums/grid_num_3.png")
+        grid_num_4: PhotoImage = grid_img_make("./images/nums/grid_num_4.png")
+        grid_num_5: PhotoImage = grid_img_make("./images/nums/grid_num_5.png")
+        grid_num_6: PhotoImage = grid_img_make("./images/nums/grid_num_6.png")
+        grid_num_7: PhotoImage = grid_img_make("./images/nums/grid_num_7.png")
+        grid_num_8: PhotoImage = grid_img_make("./images/nums/grid_num_8.png")
+
+        self.row_idx_loc = 0
+        self.col_idx_loc = 0
+        self.max_row_width = 9
+        self. max_col_height = 9
+
 
 
 def main():
