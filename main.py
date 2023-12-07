@@ -3,7 +3,11 @@ from PIL import Image, ImageTk
 from PIL.ImageTk import PhotoImage
 
 
-class Grid_difficulty:
+class GridDifficulty:
+    """
+    grid size data for a given difficulty
+    """
+
     def __init__(self, height: int, width: int, name: str):
         self.name = name
         self.height: int = height
@@ -12,14 +16,19 @@ class Grid_difficulty:
         self.screen_width = (self.width * 25) + 40
 
 
+# hard coded grid sizes
 grid_sizes = {
-    "Easy": Grid_difficulty(height=9, width=9, name="Easy"),
-    "Medium": Grid_difficulty(height=16, width=16, name="Medium"),
-    "Hard": Grid_difficulty(height=16, width=30, name="Hard"),
+    "Easy": GridDifficulty(height=9, width=9, name="Easy"),
+    "Medium": GridDifficulty(height=16, width=16, name="Medium"),
+    "Hard": GridDifficulty(height=16, width=30, name="Hard"),
 }
 
 
 class Window(tk.Tk):
+    """
+    Main game window
+    """
+
     def __init__(self) -> None:
         # starter coordinates for grid (from left, from top): 15,40
 
@@ -93,8 +102,15 @@ class Window(tk.Tk):
 
         return inner
 
+    def get_difficulty(self) -> GridDifficulty:
+        return self.difficulty
+
 
 class Reset(tk.Button):
+    """
+    Reset button for restarting the game
+    """
+
     def __init__(self, parent, *args, **kwargs):
         tk.Button.__init__(self, parent, *args, **kwargs)
         self.configure(text="Reset", command=self.reset_board)
@@ -106,6 +122,9 @@ class Reset(tk.Button):
 
 
 def grid_img_make(filename: str) -> PhotoImage:
+    """
+    function to load images easier
+    """
     if not isinstance(filename, str):
         raise TypeError(
             f"param:filename must be type<str> not type<{type(filename).__name__}>"
@@ -116,31 +135,38 @@ def grid_img_make(filename: str) -> PhotoImage:
     return img
 
 
+#! WORK ON BOMB FINDING ALGO
 class GridSquare(tk.Canvas):
-    def __init__(self, parent, *args, **kwargs):
+    def __init__(self, parent: Window, row_idx: int, col_idx: int, *args, **kwargs):
         tk.Canvas.__init__(self, parent, *args, **kwargs)
-        self.parent = parent
+        self.parent: Window = parent
 
         # grid square images
-        grid_sqr_unclicked: PhotoImage = grid_img_make("./images/grid_square1.png")
-        grid_sqr_clicked: PhotoImage = grid_img_make("./images/grid_square2.png")
-        flag_image: PhotoImage = grid_img_make("./images/grid_flag1.png")
+        self.grid_sqr_unclicked: PhotoImage = grid_img_make("./images/grid_square1.png")
+        self.grid_sqr_clicked: PhotoImage = grid_img_make("./images/grid_square2.png")
+        self.flag_image: PhotoImage = grid_img_make("./images/grid_flag1.png")
 
         # grid number images
-        grid_num_1: PhotoImage = grid_img_make("./images/nums/grid_num_1.png")
-        grid_num_2: PhotoImage = grid_img_make("./images/nums/grid_num_2.png")
-        grid_num_3: PhotoImage = grid_img_make("./images/nums/grid_num_3.png")
-        grid_num_4: PhotoImage = grid_img_make("./images/nums/grid_num_4.png")
-        grid_num_5: PhotoImage = grid_img_make("./images/nums/grid_num_5.png")
-        grid_num_6: PhotoImage = grid_img_make("./images/nums/grid_num_6.png")
-        grid_num_7: PhotoImage = grid_img_make("./images/nums/grid_num_7.png")
-        grid_num_8: PhotoImage = grid_img_make("./images/nums/grid_num_8.png")
+        self.grid_num_1: PhotoImage = grid_img_make("./images/nums/grid_num_1.png")
+        self.grid_num_2: PhotoImage = grid_img_make("./images/nums/grid_num_2.png")
+        self.grid_num_3: PhotoImage = grid_img_make("./images/nums/grid_num_3.png")
+        self.grid_num_4: PhotoImage = grid_img_make("./images/nums/grid_num_4.png")
+        self.grid_num_5: PhotoImage = grid_img_make("./images/nums/grid_num_5.png")
+        self.grid_num_6: PhotoImage = grid_img_make("./images/nums/grid_num_6.png")
+        self.grid_num_7: PhotoImage = grid_img_make("./images/nums/grid_num_7.png")
+        self.grid_num_8: PhotoImage = grid_img_make("./images/nums/grid_num_8.png")
 
-        self.row_idx_loc = 0
-        self.col_idx_loc = 0
-        self.max_row_width = 9
-        self. max_col_height = 9
+        self.row_idx_loc = row_idx
+        self.col_idx_loc = col_idx
+        self.max_r_width, self.max_c_height = self.set_grid_ranges()
+        self.num_bombs = 0
 
+    def set_grid_ranges(self) -> tuple:
+        dif: GridDifficulty = self.parent.get_difficulty()
+        return dif.width, dif.height
+
+    def count_bombs(self):
+        pass
 
 
 def main():
