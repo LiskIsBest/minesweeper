@@ -34,17 +34,6 @@ class Window(tk.Tk):
 
         super(Window, self).__init__()
 
-        self.grid_sqr_image = ImageTk.PhotoImage(
-            Image.open("./images/grid_square1.png").resize(
-                (25, 25), Image.Resampling.LANCZOS
-            )
-        )
-        self.flag_image = ImageTk.PhotoImage(
-            Image.open("./images/grid_flag1.png").resize(
-                (25, 25), Image.Resampling.LANCZOS
-            )
-        )
-
         self.default_difficulty = grid_sizes["Medium"]
         self.difficulty = self.default_difficulty
         self.window_width = self.difficulty.screen_width
@@ -147,9 +136,9 @@ class GridSquare(tk.Canvas):
         self.parent: Window = parent
 
         # grid square images
-        self.grid_sqr_unclicked: PhotoImage = grid_img_make("./images/grid_square1.png")
-        self.grid_sqr_clicked: PhotoImage = grid_img_make("./images/grid_square2.png")
-        self.flag_image: PhotoImage = grid_img_make("./images/grid_flag1.png")
+        self.grid_sqr_unclicked: PhotoImage = grid_img_make("./images/square/grid_square1.png")
+        self.grid_sqr_clicked: PhotoImage = grid_img_make("./images/square/grid_square2.png")
+        self.flag_image: PhotoImage = grid_img_make("./images/square/grid_flag1.png")
 
         # grid number images
         self.grid_num_1: PhotoImage = grid_img_make("./images/nums/grid_num_1.png")
@@ -161,8 +150,8 @@ class GridSquare(tk.Canvas):
         self.grid_num_7: PhotoImage = grid_img_make("./images/nums/grid_num_7.png")
         self.grid_num_8: PhotoImage = grid_img_make("./images/nums/grid_num_8.png")
         
-        self.grid_bomb: PhotoImage = grid_img_make("./images/grid_bomb1.png")
-        self.grid_x: PhotoImage = grid_img_make("./images/grid_x.png")
+        self.grid_bomb: PhotoImage = grid_img_make("./images/bombs/grid_bomb1.png")
+        self.grid_x: PhotoImage = grid_img_make("./images/bombs/grid_x.png")
 
         self.row_idx_loc = row_idx
         self.col_idx_loc = col_idx
