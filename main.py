@@ -83,6 +83,8 @@ class Window(tk.Tk):
         self.reset_button.place(x=self.window_width // 2, y=21, anchor="center")
         self.config(menu=self.menu_bar)
 
+        self.bomb_remain = 0
+
     def set_difficulty(self, dif: str):
         def inner():
             old_dif = self.difficulty.name
@@ -104,6 +106,9 @@ class Window(tk.Tk):
 
     def get_difficulty(self) -> GridDifficulty:
         return self.difficulty
+    
+    def get_bomb_remain(self) -> int:
+        return self.bomb_remain
 
 
 class Reset(tk.Button):
@@ -155,6 +160,9 @@ class GridSquare(tk.Canvas):
         self.grid_num_6: PhotoImage = grid_img_make("./images/nums/grid_num_6.png")
         self.grid_num_7: PhotoImage = grid_img_make("./images/nums/grid_num_7.png")
         self.grid_num_8: PhotoImage = grid_img_make("./images/nums/grid_num_8.png")
+        
+        self.grid_bomb: PhotoImage = grid_img_make("./images/grid_bomb1.png")
+        self.grid_x: PhotoImage = grid_img_make("./images/grid_x.png")
 
         self.row_idx_loc = row_idx
         self.col_idx_loc = col_idx
